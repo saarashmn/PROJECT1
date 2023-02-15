@@ -1,2 +1,2 @@
 # PROJECT1
-run random code. then run the main code. figures presented here are altered for better visualization.
+run RandomParticles code. then run the main code (FlippedParticles). figures presented here are altered for better visualization.
