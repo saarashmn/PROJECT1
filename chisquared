@@ -1,13 +1,44 @@
-import scipy.stats as stats
+import numpy as np
+import matplotlib.pyplot as plt
 
-# Chi-squared test statistic
-chi_squared_statistic = 18.36
+# Define observed data
+observed_data = np.array([10, 15, 20, 25])  # Replace with your actual data
 
-# Degrees of freedom
-dof = 10
+# Define the null hypothesis distribution parameters
+expected_counts = np.array([12, 15, 18, 25])  # Replace with your expected counts
 
-# Calculate the p-value
-p_value = 1 - stats.chi2.cdf(chi_squared_statistic, dof)
+# Define the number of permutations (random reshufflings)
+num_permutations = 1000
 
-# Print the p-value
-print("P-value:", p_value)
+# Initialize an array to store p-values from permutations
+permutation_p_values = []
+
+# Calculate the chi-squared statistic for the observed data
+observed_chi_squared = np.sum((observed_data - expected_counts)**2 / expected_counts)
+
+# Perform the permutation test
+for _ in range(num_permutations):
+    # Randomly permute the observed data
+    permuted_data = np.random.permutation(observed_data)
+    
+    # Calculate the chi-squared statistic for the permuted data
+    permuted_chi_squared = np.sum((permuted_data - expected_counts)**2 / expected_counts)
+    
+    # Append the p-value to the list
+    permutation_p_values.append(permuted_chi_squared)
+
+# Calculate the p-value by comparing the observed statistic to the permuted statistics
+p_value = (np.sum(np.array(permutation_p_values) >= observed_chi_squared) + 1) / (num_permutations + 1)
+
+# Plot the histogram of permuted chi-squared statistics
+plt.hist(permutation_p_values, bins=30, edgecolor='k', alpha=0.7)
+plt.axvline(x=observed_chi_squared, color='red', linestyle='dashed', linewidth=2, label='Observed Statistic')
+plt.xlabel('Chi-Squared Statistic')
+plt.ylabel('Frequency')
+plt.title('Permutation Test for Chi-Squared Distribution')
+plt.legend()
+plt.show()
+
+# Display the p-value
+print(f'Observed Chi-Squared Statistic: {observed_chi_squared}')
+print(f'P-Value: {p_value}')
