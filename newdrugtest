@@ -1,0 +1,55 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Generate example data (replace with your actual data)
+np.random.seed(0)  # for reproducibility
+medicine_group = np.random.normal(100, 10, 50)  # Example: 50 data points for medicine group
+placebo_group = np.random.normal(98, 10, 50)   # Example: 50 data points for placebo group
+
+# Define your test statistic function (e.g., mean difference)
+def test_statistic(group1, group2):
+    return np.mean(group1) - np.mean(group2)
+
+# Observed test statistic
+observed_statistic = test_statistic(medicine_group, placebo_group)
+
+# Number of permutations for the test
+num_permutations = 10000
+
+# Initialize an empty array to store permutation test statistics
+permutation_stats = []
+
+# Combine the data from both groups
+combined_data = np.concatenate((medicine_group, placebo_group))
+
+# Perform the permutation test
+for _ in range(num_permutations):
+    # Randomly shuffle the combined data to simulate permutations
+    np.random.shuffle(combined_data)
+    
+    # Split the permuted data into two groups
+    permuted_medicine_group = combined_data[:len(medicine_group)]
+    permuted_placebo_group = combined_data[len(medicine_group):]
+    
+    # Calculate the test statistic for the permuted data
+    permuted_statistic = test_statistic(permuted_medicine_group, permuted_placebo_group)
+    
+    # Store the test statistic in the permutation_stats array
+    permutation_stats.append(permuted_statistic)
+
+# Calculate the p-value as the proportion of permuted statistics more extreme than the observed statistic
+p_value = np.mean(np.abs(permutation_stats) >= np.abs(observed_statistic))
+
+# Plot the p-value
+plt.hist(permutation_stats, bins=50, density=True, alpha=0.5, color='blue', label='Permutation Statistics')
+plt.axvline(x=observed_statistic, color='red', linestyle='dashed', linewidth=2, label='Observed Statistic')
+plt.xlabel('Test Statistic')
+plt.ylabel('Density')
+plt.legend()
+plt.title('Permutation Test for Medicine Effect')
+plt.show()
+
+# Print the results
+print("Observed Test Statistic:", observed_statistic)
+print("Permutation Test p-value:", p_value)
